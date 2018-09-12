@@ -12,12 +12,12 @@ namespace testAssignar
     {
        public APIGatewayProxyResponse Hello(APIGatewayProxyRequest request, ILambdaContext context)
        {
-            LambdaLogger.Log("hello???");
+            Logger.LogStartOfFunction();
             var response = new { message = "hello world." };
-            return new APIGatewayProxyResponse {
+            return Logger.LogEndOfFunction(new APIGatewayProxyResponse {
                 Body = JsonConvert.SerializeObject(response),
                 StatusCode = (int)HttpStatusCode.OK
-            };
+            });
        }
     }
 }

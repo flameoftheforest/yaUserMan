@@ -1,0 +1,183 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: testAssignar # NOTE: update this with your service name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+# plugins:
+#   - serverless-dotnet
+
+provider:
+  name: aws
+  runtime: dotnetcore2.1
+  role: DefaultRole
+
+# you can overwrite defaults here
+  stage: live
+  region: ap-southeast-2
+
+package:
+  artifact: bin/Release/netcoreapp2.1/deploy-package.zip
+  exclude:
+    - node_modules/**
+    - .vs/**
+    - obj/**
+    - CurlTests/**
+
+# you can add statements to the Lambda function's IAM Role here
+#  iamRoleStatements:
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:ListBucket"
+#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:PutObject"
+#      Resource:
+#        Fn::Join:
+#          - ""
+#          - - "arn:aws:s3:::"
+#            - "Ref" : "ServerlessDeploymentBucket"
+#            - "/*"
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+functions:
+  hello:
+    handler: testAssignar::testAssignar.Handler::Hello
+    events:
+      - http:
+          path: hello
+          method: get
+
+#    The following are a few example events you can configure
+#    NOTE: Please make sure to change your handler code to work with those events
+#    Check the event documentation for details
+#    events:
+#      - http:
+#          path: users/create
+#          method: get
+#      - s3: ${env:BUCKET}
+#      - schedule: rate(10 minutes)
+#      - sns: greeter-topic
+#      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
+#      - alexaSkill: amzn1.ask.skill.xx-xx-xx-xx
+#      - alexaSmartHome: amzn1.ask.skill.xx-xx-xx-xx
+#      - iot:
+#          sql: "SELECT * FROM 'some_topic'"
+#      - cloudwatchEvent:
+#          event:
+#            source:
+#              - "aws.ec2"
+#            detail-type:
+#              - "EC2 Instance State-change Notification"
+#            detail:
+#              state:
+#                - pending
+#      - cloudwatchLog: '/aws/lambda/hello'
+#      - cognitoUserPool:
+#          pool: MyUserPool
+#          trigger: PreSignUp
+
+#    Define function environment variables here
+#    environment:
+#      variable2: value2
+
+# you can add CloudFormation resource templates here
+resources:
+  Resources:
+    DefaultRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Path: /testassignar/defaultrole/
+        RoleName: testAssignarDefaultRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: testAssignarPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - cloudformation:DescribeChangeSet
+                    - cloudformation:DescribeStackResources
+                    - cloudformation:DescribeStacks
+                    - cloudformation:GetTemplate
+                    - cloudformation:ListStackResources
+                    - cloudwatch:*
+                    - cognito-identity:ListIdentityPools
+                    - cognito-sync:GetCognitoEvents
+                    - cognito-sync:SetCognitoEvents
+                    - dynamodb:*
+                    - ec2:DescribeSecurityGroups
+                    - ec2:DescribeSubnets
+                    - ec2:DescribeVpcs
+                    - events:*
+                    - iam:GetPolicy
+                    - iam:GetPolicyVersion
+                    - iam:GetRole
+                    - iam:GetRolePolicy
+                    - iam:ListAttachedRolePolicies
+                    - iam:ListRolePolicies
+                    - iam:ListRoles
+                    - iam:PassRole
+                    - iot:AttachPrincipalPolicy
+                    - iot:AttachThingPrincipal
+                    - iot:CreateKeysAndCertificate
+                    - iot:CreatePolicy
+                    - iot:CreateThing
+                    - iot:CreateTopicRule
+                    - iot:DescribeEndpoint
+                    - iot:GetTopicRule
+                    - iot:ListPolicies
+                    - iot:ListThings
+                    - iot:ListTopicRules
+                    - iot:ReplaceTopicRule
+                    - kinesis:DescribeStream
+                    - kinesis:ListStreams
+                    - kinesis:PutRecord
+                    - kms:ListAliases
+                    - lambda:*
+                    - logs:*
+                    - s3:*
+                    - sns:ListSubscriptions
+                    - sns:ListSubscriptionsByTopic
+                    - sns:ListTopics
+                    - sns:Publish
+                    - sns:Subscribe
+                    - sns:Unsubscribe
+                    - sqs:ListQueues
+                    - sqs:SendMessage
+                    - tag:GetResources
+                    - xray:PutTelemetryRecords
+                    - xray:PutTraceSegments
+                  Resource: '*'
+#      Type: AWS::S3::Bucket
+#      Properties:
+#        BucketName: my-new-bucket
+#  Outputs:
+#     NewOutput:
+#       Description: "Description for the output"
+#       Value: "Some output value"

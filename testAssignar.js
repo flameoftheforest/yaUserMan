@@ -1,21 +1,13 @@
 'use strict';
 
 const functionName = require('./testAssignar/functionName');
+const {returnHttp} = require('./testAssignar/returnHelper');
 
 module.exports.hello = async (event, context) => {
   console.log(`START ${functionName()}`);
   console.log(typeof event);
   console.log(JSON.stringify(event));
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: 'Go Serverless v1.0! Your function executed successfully!',
-      input: event
-    }, null, 2),
-  };
-
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
+  return returnHttp(functionName(), 200, {message: `hello world`});
 };
 
 module.exports.login = async (event, context) => {

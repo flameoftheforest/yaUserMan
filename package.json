@@ -2,7 +2,7 @@
   "name": "testAssignar",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "testAssignar.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "serverless-dotnet": "^1.3.0"
+    "aws-sdk": "^2.314.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "serverless-dynamodb-local": "^0.2.35",
+    "serverless-offline": "^3.25.11"
   }
 }

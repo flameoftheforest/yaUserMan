@@ -11,7 +11,8 @@ provider:
   stage: live
   region: ap-southeast-2
   environment:
-      USER_DDB_TABLE: ${self:service}-${self:provider.stage}
+      USER_DDB_TABLE: ${self:service}-${self:provider.stage}-USER
+      TOKEN_TABLE: ${self:service}-${self:provider.stage}-TOKEN
 
 package:
   exclude:
@@ -34,16 +35,56 @@ functions:
 
 resources:
   Resources:
+    TokenTable:
+      Type: AWS::DynamodB::Table
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: Token
+            AttributeType: S
+          - AttributeName: Email
+            AttributeType: S
+          - AttributeName: UserRole
+            AttributeType: S
+          - AttributeName: StartTime
+            AttributeType: N
+          - AttributeName: Duration
+            AttributeType: N
+        KeySchema:
+          - AttributeName: Token
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.TOKEN_TABLE}
+
     UserDDBTable:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain
       Properties:
         AttributeDefinitions:
-          - AttributeName: email
+          - AttributeName: Email
             AttributeType: S
+          - AttributeName: FirstName
+            AttributeType: S
+          - AttributeName: LastName 
+            AttributeType: S
+          - AttributeName: Password
+            AttributeType: S
+          - AttributeName: ConfirmPassword
+            AttributeType: S
+          - AttributeName: UserRole
+            AttributeType: S
+          - AttributeName: ProfilePicture
+            AttributeType: S
+          - AttributeName: Active
+            AttributeType: N
         KeySchema:
-          - AttributeName: email
+          - AttributeName: Email
             KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
         TableName: ${self:provider.environment.USER_DDB_TABLE}
 
     DefaultRole:

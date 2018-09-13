@@ -1,3 +1,3 @@
 #!/bin/bash
 
-curl 'https://tpjabokbz8.execute-api.ap-southeast-2.amazonaws.com/live/hello'
+curl 'https://a95q749f09.execute-api.ap-southeast-2.amazonaws.com/live/hello'

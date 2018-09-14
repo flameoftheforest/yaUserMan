@@ -1,8 +1,8 @@
 service: testAssignar # NOTE: update this with your service name
 
-plugins:
-  - serverless-dynamodb-local
-  - serverless-offline
+# plugins:
+#   - serverless-dynamodb-local
+#   - serverless-offline
 
 provider:
   name: aws
@@ -11,12 +11,14 @@ provider:
   stage: live
   region: ap-southeast-2
   environment:
-      USER_DDB_TABLE: ${self:service}-${self:provider.stage}-USER
-      TOKEN_TABLE: ${self:service}-${self:provider.stage}-TOKEN
+    USER_DDB_TABLE: ${self:service}-${self:provider.stage}-USER
+    TOKEN_TABLE: ${self:service}-${self:provider.stage}-TOKEN
 
 package:
   exclude:
     - CurlTests/**
+    - .dynamodb/**
+    - .vscode/**
 
 functions:
   hello:
@@ -41,20 +43,12 @@ resources:
         AccessControl: PublicRead
         BucketName: ImageBucket
     TokenTable:
-      Type: AWS::DynamodB::Table
+      Type: AWS::DynamoDB::Table
       DeletionPolicy: Delete
       Properties:
         AttributeDefinitions:
           - AttributeName: Token
             AttributeType: S
-          - AttributeName: Email
-            AttributeType: S
-          - AttributeName: UserRole
-            AttributeType: S
-          - AttributeName: StartTime
-            AttributeType: N
-          - AttributeName: Duration
-            AttributeType: N
         KeySchema:
           - AttributeName: Token
             KeyType: HASH
@@ -70,20 +64,6 @@ resources:
         AttributeDefinitions:
           - AttributeName: Email
             AttributeType: S
-          - AttributeName: FirstName
-            AttributeType: S
-          - AttributeName: LastName 
-            AttributeType: S
-          - AttributeName: Password
-            AttributeType: S
-          - AttributeName: ConfirmPassword
-            AttributeType: S
-          - AttributeName: UserRole
-            AttributeType: S
-          - AttributeName: ProfilePicture
-            AttributeType: S
-          - AttributeName: Active
-            AttributeType: N
         KeySchema:
           - AttributeName: Email
             KeyType: HASH

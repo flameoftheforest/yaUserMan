@@ -6,15 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://benjichong:M0n5t3rDump5t3r@bitbucket.org/benjichong/testassignar.git"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "homepage": "https://bitbucket.org/benjichong/testassignar#readme",
   "dependencies": {
-    "aws-sdk": "^2.314.0",
+    "aws-sdk": "^2.315.0",
     "uuid": "^3.3.2"
-  },
-  "devDependencies": {
-    "serverless-dynamodb-local": "^0.2.35",
-    "serverless-offline": "^3.25.11"
   }
 }

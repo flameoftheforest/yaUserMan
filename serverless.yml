@@ -35,6 +35,11 @@ functions:
 
 resources:
   Resources:
+    Imagebucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: PublicRead
+        BucketName: ImageBucket
     TokenTable:
       Type: AWS::DynamodB::Table
       DeletionPolicy: Delete

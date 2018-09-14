@@ -1,6 +1,8 @@
 'use strict'
 const assert = require('assert');
-module.exports.Exists = (k) => {
-  assert(k != undefined && k != null);
-  return k;
+module.exports.Exists = (...args) => {
+  for(let arg in args) {
+    assert(arg != undefined && arg != null);
+  }
+  return args;
 }

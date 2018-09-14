@@ -1,16 +1,16 @@
 'use strict';
-
-const functionName = require('./testAssignar/functionName');
+const L = require('./testAssignar/log');
 const {returnHttp} = require('./testAssignar/returnHelper');
 
-module.exports.hello = async (event, context) => {
-  console.log(`START ${functionName()}`);
-  console.log(typeof event);
-  console.log(JSON.stringify(event));
-  return returnHttp(functionName(), 200, {message: `hello world`});
+const hello = async (event, context) => {
+  L.LogStartOfFunc(hello);
+  return L.LogEndOfFunc(hello, returnHttp(200, {message: `hello world`}));
 };
 
-module.exports.login = async (event, context) => {
-  console.log(`START ${functionName()}`);
-
+const login = async (event, context) => {
+  L.LogStartOfFunc(login);
+  
 };
+
+module.exports.hello = hello;
+module.exports.login = login;

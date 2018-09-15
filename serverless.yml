@@ -12,7 +12,8 @@ provider:
   region: ap-southeast-2
   environment:
     USER_DDB_TABLE: ${self:service}-${self:provider.stage}-USER
-    TOKEN_TABLE: ${self:service}-${self:provider.stage}-TOKEN
+    TOKEN_DDB_TABLE: ${self:service}-${self:provider.stage}-TOKEN
+    IMAGE_BUCKET: testassignar-${self:provider.stage}-image-bucket
 
 package:
   exclude:
@@ -28,11 +29,11 @@ functions:
           path: hello
           method: get
 
-  login:
-    handler: testAssignar.login
+  adduser:
+    handler: testAssignar.adduser
     events:
       - http:
-          path: login
+          path: adduser
           method: post
 
 resources:
@@ -41,7 +42,8 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         AccessControl: PublicRead
-        BucketName: ImageBucket
+        BucketName: ${self:provider.environment.IMAGE_BUCKET}
+
     TokenTable:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Delete
@@ -55,7 +57,7 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: ${self:provider.environment.TOKEN_TABLE}
+        TableName: ${self:provider.environment.TOKEN_DDB_TABLE}
 
     UserDDBTable:
       Type: AWS::DynamoDB::Table

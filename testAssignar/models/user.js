@@ -1,7 +1,7 @@
 'use strict'
 const Exists = require('../exists');
 
-module.exports.ValidatedUser = (json) {
+module.exports.ValidatedAddUser = (json) => {
   Exists(json.Email, json.FirstName, json.LastName, json.Password, json.ConfirmPassword, json.UserRole, json.ProfilePicture, json.Active);
 
   assert(json.Password === json.ConfirmPassword);

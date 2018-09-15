@@ -1,5 +1,4 @@
 'use strict'
-const {returnFunk} = require('./testAssignar/returnHelper');
 const ValidateUser = require('./models/user');
 const AWS = require('aws-sdk'); // eslint-disable-line import/no-extraneous-dependencies
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
@@ -11,7 +10,7 @@ const addUser = async (userJson) => {
   return new Promise((resolve, reject) => {
     const request = {
       TableName: process.env.USER_DDB_TABLE,
-      Item: ValidateUser(userJson)
+      Item: ValidateAddUser(userJson)
     };
 
     L.LogVar({request});
@@ -19,10 +18,10 @@ const addUser = async (userJson) => {
       if (err) {
         L.Log(`Error!`);
         L.LogVar({err});
-        L.LogEndOfFunc(addUser, reject(err));
+        L.LogEndOfFunc(addUser, reject(false));
         return;
       }
-      L.LogEndOfFunc(addUser, resolve());
+      L.LogEndOfFunc(addUser, resolve(true));
     });
   });
 };
@@ -51,7 +50,7 @@ const delUser = async (email) => {
 }
 
 const getUser = async (email) => {
-  L.LogStartOfFunc(GetUser);
+  L.LogStartOfFunc(getUser);
   Exists(email);
   L.LogVar(email);
 
@@ -65,15 +64,40 @@ const getUser = async (email) => {
       if (err) {
         L.Log(`Error!`);
         L.LogVar({err});
-        L.LogEndOfFunc(GetUser, reject(err));
+        L.LogEndOfFunc(getUser, reject(err));
         return;
       }
       L.LogVar(data);
-      L.LogEndOfFunc(GetUser, resolve(data));
+      L.LogEndOfFunc(getUser, resolve(data));
     });
   });
 }; 
 
+const getTokenBody = async (token) => {
+  L.LogStartOfFunc(getTokenBody);
+  Exists(token);
+  L.LogVar(token);
+
+  return new Promise((resolve, reject) => {
+    const request = {
+      TableName: process.env.TOKEN_DDB_TABLE,
+      Key: token
+    };
+    L.LogVar(request);
+    dynamoDb.get(request, (err, data) => {
+      if (err) {
+        L.Log(`Error!`);
+        L.LogVar({err});
+        L.LogEndOfFunc(getTokenBody, reject(err));
+        return;
+      }
+      L.LogVar(data);
+      L.LogEndOfFunc(getTokenBody, resolve(data));
+    });
+  });
+}
+
 module.exports.addUser = addUser;
 module.exports.delUser = delUser;
 module.exports.getUser = getUser;
+module.exports.getTokenBody = getTokenBody

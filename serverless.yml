@@ -28,7 +28,7 @@ provider:
 
 package:
   exclude:
-    - CurlTests/**
+    - Tests/**
     - .dynamodb/**
     - .vscode/**
     - Utils/**

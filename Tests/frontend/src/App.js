@@ -22,15 +22,27 @@ class App extends Component {
     console.log(this.state.selectedFile);
     const localUrl = "http://localhost:3000/upload";
     const remoteUrl = 'https://1exvemgkdk.execute-api.ap-southeast-2.amazonaws.com/live/upload';
+    const remoteHello = "https://1exvemgkdk.execute-api.ap-southeast-2.amazonaws.com/live/hello";
+    const formData = new FormData();
+    formData.append('file', this.state.selectedFile);
     fetch(remoteUrl,
     { // Your POST endpoint
       method: 'POST',
       headers: {
         "Authorization": "Bearer xx123yy123zz123",
         "x-api-key": "0mFLimr4FBadE5ysw5ecfaMubkRvym4r4Mh2zwGz",
+        "Accept": "application/json",
         //'Access-Control-Allow-Origin':'*'
       }, 
-      body: this.state.selectedFile // This is your file object
+      body: formData
+
+
+      // method: 'GET',
+      // headers: {
+      //   "Authorization": "Bearer xx123yy123zz123",
+      //   "x-api-key": "0mFLimr4FBadE5ysw5ecfaMubkRvym4r4Mh2zwGz",
+      //   "Accept": "application/json",
+      // } 
     }).then(
       response => response.json() // if the response is a JSON object
     ).then(

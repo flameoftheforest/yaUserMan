@@ -12,8 +12,8 @@ const File2S3Helper = require('./testAssignar/file2S3Helper');
 
 
 const Hello = async (event, context) => {
-  L.LogStartOfFunc(hello);
-  return L.LogEndOfFunc(hello, returnHttp(200, {message: `hello world`}));
+  L.LogStartOfFunc(Hello);
+  return L.LogEndOfFunc(Hello, returnHttp(200, {message: `hello world`}));
 };
 
 const Login = async (event, context) => {
@@ -195,7 +195,7 @@ const Upload = async (event, context) => {
   L.LogStartOfFunc(Upload);
   L.LogVar({event});
 
-  return File2S3Helper(event.body)
+  return File2S3Helper(event)
   .then((fileurl) => {
     return L.LogStartOfFunc(Upload, returnHttp(200, {message: fileurl}));
   })

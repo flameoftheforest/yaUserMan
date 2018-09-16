@@ -1,55 +1,93 @@
 'use strict'
 
-const fileType = require('file-type');
 const Exists = require('./exists');
 const L = require('./log');
 const {returnHttp} = require('./returnHelper');
 const AWS = require('aws-sdk');
 const uuid = require('uuid/v1');
 const s3 = new AWS.S3();
+const mpParse = require('./multipartParser');
 
-const GetFile = async (fileMime, buffer) => {
-  L.LogStartOfFunc(GetFile);
-  const fileExt = fileMime.ext;
-  let key = uuid();
-  key = key.split('-').join('');
+// const GetFile = async (fileMime, buffer) => {
+//   L.LogStartOfFunc(GetFile);
+//   const fileExt = fileMime.ext;
+//   let key = uuid();
+//   key = key.split('-').join('');
 
-  const params = {
-    Bucket: process.env.IMAGE_BUCKET,
-    Key: key,
-    Body: buffer
-  };
+//   const params = {
+//     Bucket: process.env.IMAGE_BUCKET,
+//     Key: key,
+//     Body: buffer
+//   };
 
-  const uploadFile = {
-    size: buffer.toString('ascii').length,
-    type: fileMime.mime,
-    name: key,
-    full_path: `http://${process.env.IMAGE_BUCKET}.s3-aws-region.amazonaws.com/${key}`
-  };
+//   const uploadFile = {
+//     size: buffer.toString('ascii').length,
+//     type: fileMime.mime,
+//     name: key,
+//     full_path: `http://${process.env.IMAGE_BUCKET}.s3-aws-region.amazonaws.com/${key}`
+//   };
 
-  return L.LogEndOfFunc(GetFile, {
-    params: params,
-    uploadFile: uploadFile
-  });
-};
+//   return L.LogEndOfFunc(GetFile, {
+//     params: params,
+//     uploadFile: uploadFile
+//   });
+// };
 
-const File2S3Helper = async (body) => {
+const S3Put = async (params) => {
+  return new Promise((resolve, reject) => {
+    L.LogStartOfFunc(S3Put);
+    s3.putObject(params, (err, data) => {
+      if (err) {
+        L.Log(`Error!`);
+        L.LogVar({err});
+        L.LogEndOfFunc(S3Put, reject(null));
+        return;
+      }
+      L.LogEndOfFunc(S3Put, resolve(params.Key));
+    });
+  })
+  ;
+}
+
+const File2S3Helper = async (event) => {
   L.LogStartOfFunc(File2S3Helper);
-  Exists(body);
+  Exists(event);
 
   return new Promise(async (resolve, reject) => {
-    const buffer = Buffer.from(body, 'base64');
-    const fileMime = fileType(buffer);
-    if (fileMime === null) {
-      throw L.LogEndOfFunc(File2S3Helper, returnHttp(400, {message: "File type not present."}));
+    // const buffer = Buffer.from(body, 'base64');
+    if (!(event.headers["content-type"].startsWith("multipart/form-data;"))) {
+      L.Log(`Error!`);
+      L.Log(`Unexpected request content type`);
+      L.LogEndOfFunc(File2S3Helper, reject(returnHttp(400, {message: "Wrong content type."})));
+      return;
     }
-    const file = await GetFile(fileMime, buffer);
-    s3.putObject(file.params, (err, data) => {
-      if (err) {
-        throw L.LogEndOfFunc(File2S3Helper, returnHttp(500, {message: "PutObject failure."}));
+
+    // parse the body
+    const fields = mpParse(event.body, event.headers["content-type"]);
+    L.LogVar({fields});
+
+    let filenames = [];
+    for (let k in fields) {
+      L.LogVar({k});
+      const params = {
+        Bucket: process.env.IMAGE_BUCKET,
+        Key: k,
+        Body: fields[k]
+      };
+
+      let ret = await S3Put(params);
+      if (ret === null) {
+        // reject
       }
-      L.LogEndOfFunc(File2S3Helper, resolve(file.uploadFile.full_path));
-    });
+      filenames.push(ret);
+    }
+
+    L.LogEndOfFunc(File2S3Helper, resolve(filenames));
+
+    
+    // L.LogEndOfFunc(File2S3Helper, reject(returnHttp(500, {message: "Function not ready."})));
+
+    // const file = await GetFile(fileMime, buffer);
   });
   
 };

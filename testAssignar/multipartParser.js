@@ -4,9 +4,15 @@ const L = require('./log');
 
 const Header_parse = (header) => {
   L.LogStartOfFunc(Header_parse);
+  L.LogVar({header});
   var headerFields = {};
+  
   var matchResult = header.match(/^.*name="([^"]*)"$/);
   if (matchResult) headerFields.name = matchResult[1];
+  
+  matchResult = header.match(/^[Cc]ontent-[Tt]ype:[ ]*([^ ]+)$/);
+  if (matchResult) headerFields["content-type"] = matchResult[1];
+  
   return L.LogEndOfFunc(Header_parse, headerFields);
 };
 
@@ -44,7 +50,6 @@ const MultiPartParser = (body, contentType) => {
   boundary = '\r\n--' + boundary;
 
   var isRaw = typeof(body) !== 'string';
-
   if (isRaw) {
     var view = new Uint8Array(body);
     s = String.fromCharCode.apply(null, view);
@@ -62,14 +67,20 @@ const MultiPartParser = (body, contentType) => {
   for (var i = 1; i < parts.length - 1; i++) {
     var subparts = parts[i].split('\r\n\r\n');
     var headers = subparts[0].split('\r\n');
+    var headerFields = {};
     for (var j = 1; j < headers.length; j++) {
-      var headerFields = Header_parse(headers[j]);
+      headerFields = Header_parse(headers[j]);
+      L.LogVar({headerFields});
       if (headerFields.name) {
         fieldName = headerFields.name;
       }
     }
 
-    partsByName[fieldName] = isRaw ? rawStringToBuffer(subparts[1]) : subparts[1];
+    // partsByName[fieldName] = isRaw ? rawStringToBuffer(subparts[1]) : subparts[1];
+    partsByName[fieldName] = {
+      buffer: Buffer.from(subparts[1]).toString('base64'),
+      "content-type": headerFields["content-type"]
+    }; // rawStringToBuffer(subparts[1]);
   }
 
   return L.LogEndOfFunc(MultiPartParser, partsByName);

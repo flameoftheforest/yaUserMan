@@ -11,6 +11,7 @@ const mpParse = require('./multipartParser');
 const S3Put = async (params) => {
   return new Promise((resolve, reject) => {
     L.LogStartOfFunc(S3Put);
+    L.LogVar({params});
     s3.putObject(params, (err, data) => {
       if (err) {
         L.Log(`Error!`);
@@ -37,8 +38,9 @@ const File2S3Helper = async (event) => {
     }
 
     // parse the body
+    let fields;
     try {
-      const fields = mpParse(event.body, event.headers["content-type"]);
+      fields = mpParse(event.body, event.headers["content-type"]);
     }
     catch (err) {
       L.LogEndOfFunc(File2S3Helper, reject(returnHttp(500, {message: `Error in multipart parsing.`})));
@@ -52,7 +54,8 @@ const File2S3Helper = async (event) => {
       const params = {
         Bucket: process.env.IMAGE_BUCKET,
         Key: k,
-        Body: fields[k]
+        Body: fields[k].body,
+        ContentType: fields[k]["content-type"]
       };
 
       let ret = await S3Put(params);

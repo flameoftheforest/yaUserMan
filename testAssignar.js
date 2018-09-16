@@ -197,7 +197,8 @@ const Upload = async (event, context) => {
 
   return File2S3Helper(event)
   .then((fileurl) => {
-    return L.LogStartOfFunc(Upload, returnHttp(200, {message: fileurl}));
+    L.Log(`received ${JSON.stringify(fileurl)}`);
+    return L.LogEndOfFunc(Upload, returnHttp(200, {message: fileurl}));
   })
   .catch((err) => {
     if (typeof err === "object" && err instanceof assert.AssertionError) {

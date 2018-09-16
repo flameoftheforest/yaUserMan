@@ -1,8 +1,8 @@
 service: testAssignar # NOTE: update this with your service name
 
-# plugins:
-#   - serverless-dynamodb-local
-#   - serverless-offline
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
 
 provider:
   name: aws
@@ -10,16 +10,28 @@ provider:
   role: DefaultRole
   stage: live
   region: ap-southeast-2
+  apiKeys:
+    - ${self:provider.stage}-key
+  usagePlan:
+    quota:
+      limit: 5000
+      offset: 2
+      period: WEEK
+    throttle:
+      burstLimit: 200
+      rateLimit: 100
   environment:
     USER_DDB_TABLE: ${self:service}-${self:provider.stage}-USER
     TOKEN_DDB_TABLE: ${self:service}-${self:provider.stage}-TOKEN
     IMAGE_BUCKET: testassignar-${self:provider.stage}-image-bucket
+    TOKEN_PERIOD_IN_MINUTES: 60 
 
 package:
   exclude:
     - CurlTests/**
     - .dynamodb/**
     - .vscode/**
+    - Utils/**
 
 functions:
   hello:
@@ -33,8 +45,48 @@ functions:
     handler: testAssignar.adduser
     events:
       - http:
-          path: adduser
+          path: user
+          method: put
+          private: true
+
+  deleteuser:
+    handler: testAssignar.deleteuser
+    events:
+      - http:
+          path: user
+          method: delete
+          private: true
+
+  getuser:
+    handler: testAssignar.getuser
+    events:
+      - http:
+          path: user
+          method: get
+          private: true
+
+  login:
+    handler: testAssignar.login
+    events:
+      - http:
+          path: user/login
           method: post
+          private: true
+
+  changepassword:
+    handler: testAssignar.changepassword
+    events:
+      - http:
+          path: user/changepassword
+          method: post
+          private: true
+
+  setupmaster:
+    handler: testAssignar.setupmaster
+    events:
+      - http:
+          path: setupmaster
+          method: get
 
 resources:
   Resources:
@@ -57,6 +109,9 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        TimeToLiveSpecification:
+          AttributeName: Expiry
+          Enabled: true
         TableName: ${self:provider.environment.TOKEN_DDB_TABLE}
 
     UserDDBTable:

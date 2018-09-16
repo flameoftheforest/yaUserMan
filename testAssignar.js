@@ -195,7 +195,7 @@ const SetupMaster = async (event, context) => {
     resolve(true);
   })
   .then(() => setupTables())
-  .then(() => ddbHelper.addTokenBody("xx123yy123zz123", "master@user.com", "Developer", -1))
+  .then(() => ddbHelper.addTokenBody("xx123yy123zz123", "master@user.com", "Admin", -1))
   .then((state) => {
     if (!state) throw returnHttp(400, {message:"Setupmaster failed."});
     return L.LogEndOfFunc(AddUser, returnHttp(200, {message:"Setupmaster done."}));

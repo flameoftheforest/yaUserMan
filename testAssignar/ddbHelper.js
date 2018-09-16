@@ -224,23 +224,6 @@ const delTokenBody = async (token) => {
   Exists(token);
   L.LogVar({token});
 
-  // return new Promise((resolve, reject) => {
-  //   const request = {
-  //     TableName: process.env.USER_DDB_TABLE,
-  //     Key: email
-  //   }
-  //   L.LogVar(request);
-  //   dynamoDb.delete(request, (err) => {
-  //     if (err) {
-  //       L.Log(`Error!`);
-  //       L.LogVar({err});
-  //       L.LogEndOfFunc(delUser, resolve(false));
-  //       return;
-  //     }
-  //     L.LogEndOfFunc(delUser, resolve(true));
-  //   });
-  // });
-
   return new Promise((resolve, reject) => {
     const request = {
       TableName: process.env.TOKEN_DDB_TABLE,

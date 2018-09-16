@@ -1,27 +1,33 @@
 'use strict'
 
+const L = require('./log');
+
 const Header_parse = (header) => {
+  L.LogStartOfFunc(Header_parse);
   var headerFields = {};
   var matchResult = header.match(/^.*name="([^"]*)"$/);
   if (matchResult) headerFields.name = matchResult[1];
-  return headerFields;
+  return L.LogEndOfFunc(Header_parse, headerFields);
 };
 
 const rawStringToBuffer = (str) => {
+  L.LogStartOfFunc(rawStringToBuffer);
   var idx, len = str.length,
     arr = new Array(len);
   for (idx = 0; idx < len; ++idx) {
     arr[idx] = str.charCodeAt(idx) & 0xFF;
   }
-  return new Uint8Array(arr).buffer;
+  return L.LogEndOfFunc(rawStringToBuffer, new Uint8Array(arr).buffer);
 };
 
 const Boundary_parse = (body) => {
+  L.LogStartOfFunc(Boundary_parse);
   var bndry = body.split('Content-Disposition: form-data;')[0];
-  return bndry.trim().slice(2);
+  return  L.LogEndOfFunc(Boundary_parse, bndry.trim().slice(2));
 };
 
 const MultiPartParser = (body, contentType) => {
+  L.LogStartOfFunc(MultiPartParser);
   // Examples for content types:
   //      multipart/form-data; boundary="----7dd322351017c"; ...
   //      multipart/form-data; boundary=----7dd322351017c; ...
@@ -66,7 +72,7 @@ const MultiPartParser = (body, contentType) => {
     partsByName[fieldName] = isRaw ? rawStringToBuffer(subparts[1]) : subparts[1];
   }
 
-  return partsByName;
+  return L.LogEndOfFunc(MultiPartParser, partsByName);
 }; 
 
 module.exports = MultiPartParser;

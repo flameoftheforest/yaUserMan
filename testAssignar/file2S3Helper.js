@@ -8,31 +8,6 @@ const uuid = require('uuid/v1');
 const s3 = new AWS.S3();
 const mpParse = require('./multipartParser');
 
-// const GetFile = async (fileMime, buffer) => {
-//   L.LogStartOfFunc(GetFile);
-//   const fileExt = fileMime.ext;
-//   let key = uuid();
-//   key = key.split('-').join('');
-
-//   const params = {
-//     Bucket: process.env.IMAGE_BUCKET,
-//     Key: key,
-//     Body: buffer
-//   };
-
-//   const uploadFile = {
-//     size: buffer.toString('ascii').length,
-//     type: fileMime.mime,
-//     name: key,
-//     full_path: `http://${process.env.IMAGE_BUCKET}.s3-aws-region.amazonaws.com/${key}`
-//   };
-
-//   return L.LogEndOfFunc(GetFile, {
-//     params: params,
-//     uploadFile: uploadFile
-//   });
-// };
-
 const S3Put = async (params) => {
   return new Promise((resolve, reject) => {
     L.LogStartOfFunc(S3Put);
@@ -54,7 +29,6 @@ const File2S3Helper = async (event) => {
   Exists(event);
 
   return new Promise(async (resolve, reject) => {
-    // const buffer = Buffer.from(body, 'base64');
     if (!(event.headers["content-type"].startsWith("multipart/form-data;"))) {
       L.Log(`Error!`);
       L.Log(`Unexpected request content type`);
@@ -63,7 +37,13 @@ const File2S3Helper = async (event) => {
     }
 
     // parse the body
-    const fields = mpParse(event.body, event.headers["content-type"]);
+    try {
+      const fields = mpParse(event.body, event.headers["content-type"]);
+    }
+    catch (err) {
+      L.LogEndOfFunc(File2S3Helper, reject(returnHttp(500, {message: `Error in multipart parsing.`})));
+      return;
+    }
     L.LogVar({fields});
 
     let filenames = [];
@@ -77,17 +57,12 @@ const File2S3Helper = async (event) => {
 
       let ret = await S3Put(params);
       if (ret === null) {
-        // reject
+        L.LogEndOfFunc(File2S3Helper, reject(returnHttp(500, {message: `Error adding ${k}.`})));
+        return;
       }
       filenames.push(ret);
     }
-
     L.LogEndOfFunc(File2S3Helper, resolve(filenames));
-
-    
-    // L.LogEndOfFunc(File2S3Helper, reject(returnHttp(500, {message: "Function not ready."})));
-
-    // const file = await GetFile(fileMime, buffer);
   });
   
 };

@@ -40,6 +40,7 @@ functions:
       - http:
           path: hello
           method: get
+          cors: true
 
   adduser:
     handler: testAssignar.adduser
@@ -48,6 +49,7 @@ functions:
           path: user
           method: put
           private: true
+          cor: true
 
   deleteuser:
     handler: testAssignar.deleteuser
@@ -56,6 +58,7 @@ functions:
           path: user
           method: delete
           private: true
+          cors: true
 
   getuser:
     handler: testAssignar.getuser
@@ -64,6 +67,7 @@ functions:
           path: user
           method: get
           private: true
+          cors: true
 
   login:
     handler: testAssignar.login
@@ -72,6 +76,7 @@ functions:
           path: user/login
           method: post
           private: true
+          cors: true
 
   changepassword:
     handler: testAssignar.changepassword
@@ -80,6 +85,16 @@ functions:
           path: user/changepassword
           method: post
           private: true
+          cors: true
+
+  upload:
+    handler: testAssignar.upload
+    events:
+      - http:
+          path: upload
+          method: post
+          private: true
+          cors: true
 
   setupmaster:
     handler: testAssignar.setupmaster
@@ -87,6 +102,7 @@ functions:
       - http:
           path: setupmaster
           method: get
+          cors: true
 
 resources:
   Resources:

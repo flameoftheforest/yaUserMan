@@ -16,6 +16,7 @@
   "homepage": "https://bitbucket.org/benjichong/testassignar#readme",
   "dependencies": {
     "aws-sdk": "^2.315.0",
+    "file-type": "^9.0.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

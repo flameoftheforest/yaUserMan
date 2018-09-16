@@ -8,6 +8,8 @@ const assert = require('assert');
 const tokenMaker = require('./testAssignar/tokenMaker');
 const setupTables = require('./testAssignar/setupTables');
 const ValidatedChangePassword = require('./testAssignar/models/changepassword');
+const File2S3Helper = require('./testAssignar/file2S3Helper');
+
 
 const Hello = async (event, context) => {
   L.LogStartOfFunc(hello);
@@ -189,6 +191,24 @@ const GetUser = async (event, context) => {
   ;
 };
 
+const Upload = async (event, context) => {
+  L.LogStartOfFunc(Upload);
+  L.LogVar({event});
+
+  return File2S3Helper(event.body)
+  .then((fileurl) => {
+    return L.LogStartOfFunc(Upload, returnHttp(200, {message: fileurl}));
+  })
+  .catch((err) => {
+    if (typeof err === "object" && err instanceof assert.AssertionError) {
+      return L.LogEndOfFunc(GetUser, returnHttp(500, err));
+    }
+    return L.LogEndOfFunc(GetUser, err);
+  })
+  ;
+
+};
+
 const SetupMaster = async (event, context) => {
   return new Promise((resolve, reject) => {
     if( !(process.env.IS_OFFLINE) ) throw returnHttp(401, {message:"Setupmaster unauthorized."});
@@ -216,3 +236,4 @@ module.exports.setupmaster = SetupMaster;
 module.exports.getuser = GetUser;
 module.exports.login = Login;
 module.exports.changepassword = ChangePassword;
+module.exports.upload = Upload;

@@ -31,7 +31,11 @@ class App extends Component {
     super();
     this.state = Object.assign(
       {},
-      { selectedFile: null }
+      { selectedFile: null,
+        apikey: "your api key here",
+        token: "your token here",
+        email: "target email here"
+      }
     );
     this.fileChangedHandler = this.fileChangedHandler.bind(this);
     this.uploadHandler = this.uploadHandler.bind(this);
@@ -41,21 +45,33 @@ class App extends Component {
     this.setState({selectedFile: event.target.files[0]});
   }
 
+  apiKeyHandler(event) {
+    this.setState({apikey: event.target.value});
+  }
+
+  tokenHandler(event) {
+    this.setState({token: event.target.value});
+  }
+
+  emailHandler(event) {
+    this.setState({email: event.target.value});
+  }
+
   uploadHandler() { 
     console.log(this.state.selectedFile);
     const localUrl = "http://localhost:3000/upload";
     const remoteUrl = 'https://1exvemgkdk.execute-api.ap-southeast-2.amazonaws.com/live/upload';
     const remoteHello = "https://1exvemgkdk.execute-api.ap-southeast-2.amazonaws.com/live/hello";
-    // const formData = new FormData();
-    // formData.append('file', this.state.selectedFile);
 
     const selectedFile = this.state.selectedFile;
+    const email = this.state.email;
     return getBase64fromFile(selectedFile)
     .then((base64Data) => {
       return {
         name: selectedFile.name,
         header: base64Data.header,
-        base64: base64Data.body
+        base64: base64Data.body,
+        email: email
       }
     })
     .then((body) => {
@@ -67,10 +83,9 @@ class App extends Component {
       { // Your POST endpoint
         method: 'POST',
         headers: {
-          "Authorization": "Bearer xx123yy123zz123",
-          "x-api-key": "0mFLimr4FBadE5ysw5ecfaMubkRvym4r4Mh2zwGz",
+          "Authorization": "Bearer " + this.state.token,
+          "x-api-key": this.state.apikey,
           "Accept": "application/json",
-          //'Access-Control-Allow-Origin':'*'
         }, 
         body: JSON.stringify(body)
       });
@@ -92,8 +107,30 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
+          <h1 className="App-title">File Upload Test</h1>
+          <h2 className="App-title">(also tests for CORS)</h2>
         </header>
+        <p>
+          <input
+            type="text"
+            defaultValue={this.state.apikey}
+            onChange={this.apiKeyHandler}
+          />
+        </p>
+        <p>
+          <input
+            type="text"
+            defaultValue={this.state.token}
+            onChange={this.tokenHandler}
+          />
+        </p>
+        <p>
+          <input
+            type="text"
+            defaultValue={this.state.email}
+            onChange={this.emailHandler}
+          />
+        </p>
         <p className="App-intro">
           <input type="file" onChange={this.fileChangedHandler}></input>
           <button onClick={this.uploadHandler}>Upload!</button>

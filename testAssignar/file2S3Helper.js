@@ -9,6 +9,8 @@ const s3 = new AWS.S3();
 // const mpParse = require('./multipartParser');
 const bodyToObject = require('./bodyToObject');
 
+const S3URL = "https://s3-ap-southeast-2.amazonaws.com/";
+
 const S3Put = async (params) => {
   return new Promise((resolve, reject) => {
     L.LogStartOfFunc(S3Put);
@@ -32,44 +34,6 @@ const File2S3Helper = async (event) => {
   Exists(event);
 
   return new Promise(async (resolve, reject) => {
-    // if (!(event.headers["content-type"].startsWith("multipart/form-data;"))) {
-    //   L.Log(`Error!`);
-    //   L.Log(`Unexpected request content type`);
-    //   L.LogEndOfFunc(File2S3Helper, reject(returnHttp(400, {message: "Wrong content type."})));
-    //   return;
-    // }
-
-    // parse the body
-    // let fields;
-    // try {
-    //   fields = mpParse(event.body, event.headers["content-type"]);
-    // }
-    // catch (err) {
-    //   L.LogEndOfFunc(File2S3Helper, reject(returnHttp(500, {message: `Error in multipart parsing.`})));
-    //   return;
-    // }
-    // L.LogVar({fields});
-
-
-    // let filenames = [];
-    // for (let k in fields) {
-    //   L.LogVar({k});
-    //   const params = {
-    //     Bucket: process.env.IMAGE_BUCKET,
-    //     Key: k,
-    //     Body: fields[k].buffer,
-    //     ContentType: fields[k]["content-type"]
-    //   };
-
-    //   let ret = await S3Put(params);
-    //   if (ret === null) {
-    //     L.LogEndOfFunc(File2S3Helper, reject(returnHttp(500, {message: `Error adding ${k}.`})));
-    //     return;
-    //   }
-    //   filenames.push(ret);
-    // }
-
-    bodyToObject(event);
     const params = {
       Bucket: process.env.IMAGE_BUCKET,
       Key: event.body.name,
@@ -82,7 +46,7 @@ const File2S3Helper = async (event) => {
       return;
     }
 
-    L.LogEndOfFunc(File2S3Helper, resolve(event.body.name));
+    L.LogEndOfFunc(File2S3Helper, resolve(S3URL + "/" + process.env.IMAGE_BUCKET + "/" + event.body.name));
   });
   
 };

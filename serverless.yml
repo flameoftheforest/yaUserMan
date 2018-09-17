@@ -104,6 +104,9 @@ functions:
           method: get
           cors: true
 
+  setupmasterlive:
+    handler: testAssignar.setupmasterlive
+
 resources:
   Resources:
     Imagebucket:

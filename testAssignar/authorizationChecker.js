@@ -55,9 +55,9 @@ module.exports = class {
       "Admin": 0,
       "Developer": 0
     }
-    const ret = (this.tokenBody.Role in authList);
-    L.Log({ret});
-    return L.LogEndOfFunc(this.AddUserAuthorized, (this.tokenBody.Role in authList));
+    const authorized = (this.tokenBody.Role in authList);
+    L.Log({authorized});
+    return L.LogEndOfFunc(this.AddUserAuthorized, authorized);
   }
 
   async DeleteUserAuthorized() {
@@ -66,9 +66,9 @@ module.exports = class {
     const authList = {
       "Admin": 0
     }
-    const ret = (this.tokenBody.Role in authList);
-    L.Log({ret});
-    return L.LogEndOfFunc(this.DeleteUserAuthorized, (this.tokenBody.Role in authList));
+    const authorized = (this.tokenBody.Role in authList);
+    L.Log({authorized});
+    return L.LogEndOfFunc(this.DeleteUserAuthorized, authorized);
   }
 
   async GetUserAuthorized() {
@@ -79,8 +79,19 @@ module.exports = class {
       "Developer": 0,
       "Editor": 0
     }
-    const ret = (this.tokenBody.Role in authList);
-    L.Log({ret});
-    return L.LogEndOfFunc(this.GetUserAuthorized, (this.tokenBody.Role in authList));
+    const authorized = (this.tokenBody.Role in authList);
+    L.Log({authorized});
+    return L.LogEndOfFunc(this.GetUserAuthorized, authorized);
+  }
+
+  async EditUserAuthorized() {
+    L.LogStartOfFunc(this.EditUserAuthorized);
+    Exists(this.tokenBody);
+    const authList = {
+      "Admin":0
+    }
+    const authorized = (this.tokenBody.Role in authList);
+    L.Log({authorized});
+    return L.LogEndOfFunc(this.EditUserAuthorized, authorized);
   }
 };

@@ -195,19 +195,38 @@ const Upload = async (event, context) => {
   L.LogStartOfFunc(Upload);
   L.LogVar({event});
 
-  return File2S3Helper(event)
+  let profileUrl = "";
+
+  BodyToObject(event);
+  const authCheck = new AuthorizationChecker();
+  return authCheck.Setup(event)
+  .then(() => authCheck.EditUserAuthorized())
+  .then((state) => {
+    if (!state) throw returnHttp(401, {message:"Upload unauthorized."});
+  })
+  .then(() => File2S3Helper(event))
   .then((fileurl) => {
-    L.Log(`received ${JSON.stringify(fileurl)}`);
-    return L.LogEndOfFunc(Upload, returnHttp(200, {message: fileurl}));
+    profileUrl = fileurl;
+  })
+  .then(() => ddbHelper.getUser(event.body.email))
+  .then((userDetail) => {
+    userDetail.ProfilePicture = profileUrl;
+    return userDetail;
+  })
+  .then((userDetail) => ddbHelper.addUser(userDetail))
+  .then((state) => {
+    if (!state) throw returnHttp(400, {message:"Upload failed."});
+  })
+  .then(() => {
+    return L.LogEndOfFunc(Upload, returnHttp(200, {message: "Upload OK."}));
   })
   .catch((err) => {
     if (typeof err === "object" && err instanceof assert.AssertionError) {
-      return L.LogEndOfFunc(GetUser, returnHttp(500, err));
+      return L.LogEndOfFunc(Upload, returnHttp(500, err));
     }
-    return L.LogEndOfFunc(GetUser, err);
+    return L.LogEndOfFunc(Upload, err);
   })
   ;
-
 };
 
 const SetupMaster = async (event, context) => {
@@ -230,10 +249,29 @@ const SetupMaster = async (event, context) => {
   ;
 }
 
+const SetupMasterLive = async (event, context) => {
+  return new Promise((resolve, reject) => {
+    resolve(true);
+  })
+  .then(() => ddbHelper.addTokenBody("xx123yy123zz123", "master@user.com", "Admin", -1))
+  .then((state) => {
+    if (!state) throw returnHttp(400, {message:"Setupmaster failed."});
+    return L.LogEndOfFunc(AddUser, returnHttp(200, {message:"Setupmaster done."}));
+  })
+  .catch((err) =>  {
+    if (typeof err === "object" && err instanceof assert.AssertionError) {
+      return L.LogEndOfFunc(GetUser, returnHttp(500, err));
+    }
+    return L.LogEndOfFunc(GetUser, err);
+  })
+  ;
+}
+
 module.exports.hello = Hello;
 module.exports.adduser = AddUser;
 module.exports.deleteuser = DeleteUser;
 module.exports.setupmaster = SetupMaster;
+module.exports.setupmasterlive = SetupMasterLive;
 module.exports.getuser = GetUser;
 module.exports.login = Login;
 module.exports.changepassword = ChangePassword;

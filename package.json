@@ -1,19 +1,19 @@
 {
-  "name": "testAssignar",
+  "name": "yaUserMan",
   "version": "1.0.0",
   "description": "",
-  "main": "testAssignar.js",
+  "main": "yaUserMan.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://benjichong:M0n5t3rDump5t3r@bitbucket.org/benjichong/testassignar.git"
+    "url": "git+https://benjichong:M0n5t3rDump5t3r@bitbucket.org/benjichong/yaUserMan.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/benjichong/testassignar#readme",
+  "homepage": "https://bitbucket.org/benjichong/yaUserMan#readme",
   "dependencies": {
     "aws-sdk": "^2.315.0",
     "uuid": "^3.3.2"

@@ -36,8 +36,9 @@ const File2S3Helper = async (event) => {
   return new Promise(async (resolve, reject) => {
     const params = {
       Bucket: process.env.IMAGE_BUCKET,
-      Key: event.body.name,
-      Body: Buffer.from(event.body.base64, 'base64')
+      Key: uuid() + event.body.name,
+      Body: Buffer.from(event.body.base64, 'base64'),
+      ACL: "public-read"
     };
 
     let ret = await S3Put(params);
@@ -46,7 +47,7 @@ const File2S3Helper = async (event) => {
       return;
     }
 
-    L.LogEndOfFunc(File2S3Helper, resolve(S3URL + "/" + process.env.IMAGE_BUCKET + "/" + event.body.name));
+    L.LogEndOfFunc(File2S3Helper, resolve(S3URL + "/" + params.Bucket + "/" + params.Key));
   });
   
 };

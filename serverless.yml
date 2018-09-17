@@ -1,4 +1,4 @@
-service: testAssignar # NOTE: update this with your service name
+service: yaUserMan # NOTE: update this with your service name
 
 plugins:
   - serverless-dynamodb-local
@@ -23,7 +23,7 @@ provider:
   environment:
     USER_DDB_TABLE: ${self:service}-${self:provider.stage}-USER
     TOKEN_DDB_TABLE: ${self:service}-${self:provider.stage}-TOKEN
-    IMAGE_BUCKET: testassignar-${self:provider.stage}-image-bucket
+    IMAGE_BUCKET: yaUserMan-${self:provider.stage}-image-bucket
     TOKEN_PERIOD_IN_MINUTES: 60 
 
 package:
@@ -35,7 +35,7 @@ package:
 
 functions:
   hello:
-    handler: testAssignar.hello
+    handler: yaUserMan.hello
     events:
       - http:
           path: hello
@@ -43,7 +43,7 @@ functions:
           cors: true
 
   adduser:
-    handler: testAssignar.adduser
+    handler: yaUserMan.adduser
     events:
       - http:
           path: user
@@ -52,7 +52,7 @@ functions:
           cor: true
 
   deleteuser:
-    handler: testAssignar.deleteuser
+    handler: yaUserMan.deleteuser
     events:
       - http:
           path: user
@@ -61,7 +61,7 @@ functions:
           cors: true
 
   getuser:
-    handler: testAssignar.getuser
+    handler: yaUserMan.getuser
     events:
       - http:
           path: user
@@ -70,7 +70,7 @@ functions:
           cors: true
 
   login:
-    handler: testAssignar.login
+    handler: yaUserMan.login
     events:
       - http:
           path: user/login
@@ -79,7 +79,7 @@ functions:
           cors: true
 
   changepassword:
-    handler: testAssignar.changepassword
+    handler: yaUserMan.changepassword
     events:
       - http:
           path: user/changepassword
@@ -88,7 +88,7 @@ functions:
           cors: true
 
   upload:
-    handler: testAssignar.upload
+    handler: yaUserMan.upload
     events:
       - http:
           path: upload
@@ -97,7 +97,7 @@ functions:
           cors: true
 
   setupmaster:
-    handler: testAssignar.setupmaster
+    handler: yaUserMan.setupmaster
     events:
       - http:
           path: setupmaster
@@ -105,7 +105,7 @@ functions:
           cors: true
 
   setupmasterlive:
-    handler: testAssignar.setupmasterlive
+    handler: yaUserMan.setupmasterlive
 
 resources:
   Resources:
@@ -151,8 +151,8 @@ resources:
     DefaultRole:
       Type: AWS::IAM::Role
       Properties:
-        Path: /testassignar/defaultrole/
-        RoleName: testAssignarDefaultRole
+        Path: /yaUserMan/defaultrole/
+        RoleName: yaUserManDefaultRole
         AssumeRolePolicyDocument:
           Version: '2012-10-17'
           Statement:
@@ -162,7 +162,7 @@ resources:
                   - lambda.amazonaws.com
               Action: sts:AssumeRole
         Policies:
-          - PolicyName: testAssignarPolicy
+          - PolicyName: yaUserManPolicy
             PolicyDocument:
               Version: '2012-10-17'
               Statement:

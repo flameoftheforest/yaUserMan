@@ -1,14 +1,14 @@
 'use strict';
-const L = require('./testAssignar/log');
-const {returnHttp} = require('./testAssignar/returnHelper');
-const ddbHelper = require('./testAssignar/ddbHelper');
-const AuthorizationChecker = require('./testAssignar/authorizationChecker');
-const BodyToObject = require('./testAssignar/bodyToObject');
+const L = require('./yaUserMan/log');
+const {returnHttp} = require('./yaUserMan/returnHelper');
+const ddbHelper = require('./yaUserMan/ddbHelper');
+const AuthorizationChecker = require('./yaUserMan/authorizationChecker');
+const BodyToObject = require('./yaUserMan/bodyToObject');
 const assert = require('assert');
-const tokenMaker = require('./testAssignar/tokenMaker');
-const setupTables = require('./testAssignar/setupTables');
-const ValidatedChangePassword = require('./testAssignar/models/changepassword');
-const File2S3Helper = require('./testAssignar/file2S3Helper');
+const tokenMaker = require('./yaUserMan/tokenMaker');
+const setupTables = require('./yaUserMan/setupTables');
+const ValidatedChangePassword = require('./yaUserMan/models/changepassword');
+const File2S3Helper = require('./yaUserMan/file2S3Helper');
 
 
 const Hello = async (event, context) => {
@@ -253,7 +253,7 @@ const SetupMasterLive = async (event, context) => {
   return new Promise((resolve, reject) => {
     resolve(true);
   })
-  .then(() => ddbHelper.addTokenBody("xx123yy123zz123", "master@user.com", "Admin", -1))
+  .then(() => ddbHelper.addTokenBody("xx123yy123zz123", "master@user.com", "Admin", 4102405200))
   .then((state) => {
     if (!state) throw returnHttp(400, {message:"Setupmaster failed."});
     return L.LogEndOfFunc(AddUser, returnHttp(200, {message:"Setupmaster done."}));

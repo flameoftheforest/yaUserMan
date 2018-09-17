@@ -39,6 +39,9 @@ class App extends Component {
     );
     this.fileChangedHandler = this.fileChangedHandler.bind(this);
     this.uploadHandler = this.uploadHandler.bind(this);
+    this.apiKeyHandler = this.apiKeyHandler.bind(this);
+    this.tokenHandler = this.tokenHandler.bind(this);
+    this.emailHandler = this.emailHandler.bind(this);
   }
 
   fileChangedHandler(event) {

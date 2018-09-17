@@ -8,7 +8,7 @@ provider:
   name: aws
   runtime: nodejs8.10
   role: DefaultRole
-  stage: live
+  stage: prod
   region: ap-southeast-2
   apiKeys:
     - ${self:provider.stage}-key
@@ -23,7 +23,7 @@ provider:
   environment:
     USER_DDB_TABLE: ${self:service}-${self:provider.stage}-USER
     TOKEN_DDB_TABLE: ${self:service}-${self:provider.stage}-TOKEN
-    IMAGE_BUCKET: yaUserMan-${self:provider.stage}-image-bucket
+    IMAGE_BUCKET: yauserman-${self:provider.stage}-image-bucket
     TOKEN_PERIOD_IN_MINUTES: 60 
 
 package:

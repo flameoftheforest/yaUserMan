@@ -78,7 +78,7 @@ const MultiPartParser = (body, contentType) => {
 
     // partsByName[fieldName] = isRaw ? rawStringToBuffer(subparts[1]) : subparts[1];
     partsByName[fieldName] = {
-      buffer: Buffer.from(subparts[1]).toString('base64'),
+      buffer: isRaw ? rawStringToBuffer(subparts[1]) : subparts[1], // Buffer.from(subparts[1]).toString(),
       "content-type": headerFields["content-type"]
     }; // rawStringToBuffer(subparts[1]);
   }

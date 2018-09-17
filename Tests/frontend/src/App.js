@@ -2,6 +2,19 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+const getBase64fromFile = async (file) => {
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = (err) => {
+      reject(err);
+    };
+  });
+}
+
 class App extends Component {
 
   constructor() {
@@ -23,8 +36,13 @@ class App extends Component {
     const localUrl = "http://localhost:3000/upload";
     const remoteUrl = 'https://1exvemgkdk.execute-api.ap-southeast-2.amazonaws.com/live/upload';
     const remoteHello = "https://1exvemgkdk.execute-api.ap-southeast-2.amazonaws.com/live/hello";
-    const formData = new FormData();
-    formData.append('file', this.state.selectedFile);
+    // const formData = new FormData();
+    // formData.append('file', this.state.selectedFile);
+    const body = {
+      name: this.state.selectedFile.name,
+      base64: getBase64fromFile(this.state.selectedFile)
+    };
+
     fetch(remoteUrl,
     { // Your POST endpoint
       method: 'POST',
@@ -34,7 +52,7 @@ class App extends Component {
         "Accept": "application/json",
         //'Access-Control-Allow-Origin':'*'
       }, 
-      body: formData
+      body: body
 
 
       // method: 'GET',

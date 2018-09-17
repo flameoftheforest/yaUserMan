@@ -82,7 +82,7 @@ const File2S3Helper = async (event) => {
       return;
     }
 
-    L.LogEndOfFunc(File2S3Helper, resolve(filenames));
+    L.LogEndOfFunc(File2S3Helper, resolve(event.body.name));
   });
   
 };

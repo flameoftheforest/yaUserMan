@@ -2,14 +2,24 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-const getBase64fromFile = async (file) => {
-  return await new Promise((resolve, reject) => {
+const getBase64fromFile = (file) => {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      resolve(reader.result);
+      console.log(`getBase64fromFile success.`);
+      // console.log(`${JSON.stringify(reader.result)}`);
+      const spliced = reader.result.split(',');
+      const header = spliced[0];
+      spliced.shift();
+      resolve({
+        header: header,
+        body: spliced.join('')
+      });
     };
     reader.onerror = (err) => {
+      console.log(`getBase64fromFile failed.`);
+      // console.log(`Error!! ${JSON.stringify(err)}`);
       reject(err);
     };
   });
@@ -38,36 +48,43 @@ class App extends Component {
     const remoteHello = "https://1exvemgkdk.execute-api.ap-southeast-2.amazonaws.com/live/hello";
     // const formData = new FormData();
     // formData.append('file', this.state.selectedFile);
-    const body = {
-      name: this.state.selectedFile.name,
-      base64: getBase64fromFile(this.state.selectedFile)
-    };
 
-    fetch(remoteUrl,
-    { // Your POST endpoint
-      method: 'POST',
-      headers: {
-        "Authorization": "Bearer xx123yy123zz123",
-        "x-api-key": "0mFLimr4FBadE5ysw5ecfaMubkRvym4r4Mh2zwGz",
-        "Accept": "application/json",
-        //'Access-Control-Allow-Origin':'*'
-      }, 
-      body: body
-
-
-      // method: 'GET',
-      // headers: {
-      //   "Authorization": "Bearer xx123yy123zz123",
-      //   "x-api-key": "0mFLimr4FBadE5ysw5ecfaMubkRvym4r4Mh2zwGz",
-      //   "Accept": "application/json",
-      // } 
-    }).then(
+    const selectedFile = this.state.selectedFile;
+    return getBase64fromFile(selectedFile)
+    .then((base64Data) => {
+      return {
+        name: selectedFile.name,
+        header: base64Data.header,
+        base64: base64Data.body
+      }
+    })
+    .then((body) => {
+      console.log(`${JSON.stringify(body)}`);
+      return body;
+    })
+    .then((body) => {
+      return fetch(remoteUrl,
+      { // Your POST endpoint
+        method: 'POST',
+        headers: {
+          "Authorization": "Bearer xx123yy123zz123",
+          "x-api-key": "0mFLimr4FBadE5ysw5ecfaMubkRvym4r4Mh2zwGz",
+          "Accept": "application/json",
+          //'Access-Control-Allow-Origin':'*'
+        }, 
+        body: JSON.stringify(body)
+      });
+    })
+    .then(
       response => response.json() // if the response is a JSON object
-    ).then(
+    )
+    .then(
       success => console.log(success) // Handle the success response object
-    ).catch(
+    )
+    .catch(
       error => console.log(error) // Handle the error response object
-    );
+    )
+    ;
   }
 
   render() {

@@ -100,7 +100,7 @@
   }
   ```
   + Response:
-    + 200.
+    + 200
     + 400 - Request Error.
     + 401 - Unauthorized.
     + 500 - Error.

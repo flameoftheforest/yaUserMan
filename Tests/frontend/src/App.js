@@ -8,7 +8,6 @@ const getBase64fromFile = (file) => {
     reader.readAsDataURL(file);
     reader.onload = () => {
       console.log(`getBase64fromFile success.`);
-      // console.log(`${JSON.stringify(reader.result)}`);
       const spliced = reader.result.split(',');
       const header = spliced[0];
       spliced.shift();
@@ -19,7 +18,6 @@ const getBase64fromFile = (file) => {
     };
     reader.onerror = (err) => {
       console.log(`getBase64fromFile failed.`);
-      // console.log(`Error!! ${JSON.stringify(err)}`);
       reject(err);
     };
   });
@@ -34,7 +32,9 @@ class App extends Component {
       { selectedFile: null,
         apikey: "your api key here",
         token: "your token here",
-        email: "target email here"
+        email: "target email here",
+        url: "aws-url here",
+        status: ""
       }
     );
     this.fileChangedHandler = this.fileChangedHandler.bind(this);
@@ -42,6 +42,11 @@ class App extends Component {
     this.apiKeyHandler = this.apiKeyHandler.bind(this);
     this.tokenHandler = this.tokenHandler.bind(this);
     this.emailHandler = this.emailHandler.bind(this);
+    this.urlHandler = this.urlHandler.bind(this);
+  }
+
+  urlHandler(event) {
+    this.setState({url: event.target.value});
   }
 
   fileChangedHandler(event) {
@@ -62,9 +67,6 @@ class App extends Component {
 
   uploadHandler() { 
     console.log(this.state.selectedFile);
-    const localUrl = "http://localhost:3000/upload";
-    const remoteUrl = 'https://1exvemgkdk.execute-api.ap-southeast-2.amazonaws.com/live/upload';
-    const remoteHello = "https://1exvemgkdk.execute-api.ap-southeast-2.amazonaws.com/live/hello";
 
     const selectedFile = this.state.selectedFile;
     const email = this.state.email;
@@ -82,7 +84,8 @@ class App extends Component {
       return body;
     })
     .then((body) => {
-      return fetch(remoteUrl,
+      this.setState({status: "Begin uploading..."});
+      return fetch(this.state.url+"/upload",
       { // Your POST endpoint
         method: 'POST',
         headers: {
@@ -97,11 +100,19 @@ class App extends Component {
       response => response.json() // if the response is a JSON object
     )
     .then(
-      success => console.log(success) // Handle the success response object
+      success => {
+        console.log(success); // Handle the success response object
+        this.setState({
+          status: success.message
+        });
+      }
     )
     .catch(
-      error => console.log(error) // Handle the error response object
-    )
+      error => {console.log(error) ;// Handle the error response object
+        this.setState({
+          status: JSON.stringify(error)
+        });
+      })
     ;
   }
 
@@ -113,6 +124,13 @@ class App extends Component {
           <h1 className="App-title">File Upload Test</h1>
           <h2 className="App-title">(also tests for CORS)</h2>
         </header>
+        <p>
+          <input
+            type="text"
+            defaultValue={this.state.url}
+            onChange={this.urlHandler}
+          />
+        </p>
         <p>
           <input
             type="text"
@@ -137,6 +155,14 @@ class App extends Component {
         <p className="App-intro">
           <input type="file" onChange={this.fileChangedHandler}></input>
           <button onClick={this.uploadHandler}>Upload!</button>
+        </p>
+        <p>
+        <input
+            type="text"
+            id="output"
+            readOnly={true}
+            value={this.state.status}
+          />
         </p>
       </div>
     );

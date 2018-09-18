@@ -127,4 +127,49 @@
     + 500 - Error.
   + Note: refer to `Tests/Frontend/App.js` to see how to construct the Request body.
 
-##Tests
+##Tests 
+#### Overview
++ All tests resides in the /Tests folder. 
+
++ All tests uses Curls. 
+
++ All tests needs proper aws-urls.
+
++ All tests needs to be modified with proper body.
+
+#### Decription
++ 01Test.sh
+  + Convenient wrapper for login
+  + Edit url and apiKey in file for proper execution
+
++ 02Test.sh
+  + Convenient wrapper for running add/get/delete user
+  + Edit url, apiKey and token in file for proper execution
+
++ testLogin.sh \<aws-url> \<api-key>
+  + Tests user login
+
++ testAddUser.sh \<aws-url> \<api-key> \<token>
+  + Tests the add user endpoint
+
++ testDelUser.sh \<aws-url> \<api-key> \<token>
+  + Tests the delete user endpoint
+
++ testGetUser.sh \<aws-url> \<api-key> \<token>
+  + Tests the get user endpoint
+
++ frontend upload test
+  + Tests uploading of profile picture and CORS
+  + Steps:
+    + Navigate to frontend/
+    + `npm install`
+    + `npm start`
+    + Navigate in browser to `http://localhost:6546` if it did not start.
+    + Insert aws-url
+    + Insert api-key
+    + Insert token (using `testLogin.sh` to generate one).
+    + Insert email address of target user.
+    + Select a file.
+    + Click `Upload!`
+    + Use `testGetUser.sh` to observe updated profilepicture link.
+    + User browser to check if link works.

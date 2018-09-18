@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# url="https://1exvemgkdk.execute-api.ap-southeast-2.amazonaws.com/live"
-url="http://localhost:3000"
+curl "$1/user" \
+-H "x-api-key:  $2" \
+-H "Authorization: Bearer $3" \
+--verbose
 
-curl "$url/user?email=testuser1@test.com&password" \
--H 'x-api-key:  d41d8cd98f00b204e9800998ecf8427e' \
--H 'Authorization: Bearer xx123yy123zz123'
-
-# curl "$url/user?email=true" \
-# -H 'x-api-key:  d41d8cd98f00b204e9800998ecf8427e' \
-# -H 'Authorization: Bearer b41e69b0-b97e-11e8-96a6-f50b016f61b2'
+curl "$1/user?email=test01@test.com" \
+-H "x-api-key:  $2" \
+-H "Authorization: Bearer $3" \
+--verbose

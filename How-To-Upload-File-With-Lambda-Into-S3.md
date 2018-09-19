@@ -56,7 +56,7 @@ const getBase64fromFile = (file) => {
 + Use Fetch API or something similar to dispatch the file for upload.
 
 ## Lambda
-+ We are looking the POST endpoint
++ We are looking the POST endpoint. Specifically, the `file2S3.js`
 + Extract the base64 string to Buffer object using the following approach:
 ```
 const buffer = Buffer.from(event.body.base64, 'base64')

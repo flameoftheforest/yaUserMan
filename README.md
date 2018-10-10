@@ -173,3 +173,6 @@
     + Click `Upload!`
     + Use `testGetUser.sh` to observe updated profilepicture link.
     + User browser to check if link works.
+
+  #### Adding for testing
+  
